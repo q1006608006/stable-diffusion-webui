@@ -179,8 +179,18 @@ def refresh_available_extensions(url, hide_tags, sort_column):
     global available_extensions
 
     import urllib.request
-    with urllib.request.urlopen(url) as response:
-        text = response.read()
+    if shared.cmd_opts.extensions_proxy is not None:
+        ps = shared.cmd_opts.extensions_proxy.split('://', 1)
+        proxy_handler = urllib.request.ProxyHandler({
+            ps[0]: ps[1]
+        })
+        opener = urllib.request.build_opener(proxy_handler)
+        req = urllib.request.Request(url)
+        with opener.open(req) as response:
+            text = response.read()
+    else:
+        with urllib.request.urlopen(url) as response:
+            text = response.read()
 
     available_extensions = json.loads(text)
 

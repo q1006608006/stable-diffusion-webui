@@ -78,6 +78,20 @@ def refresh_vae_list():
             os.path.join(shared.cmd_opts.vae_dir, '**/*.safetensors'),
         ]
 
+    if shared.cmd_opts.ext_model_dir is not None:
+        paths += [
+            os.path.join(shared.cmd_opts.ext_model_dir, '**/*.vae.ckpt'),
+            os.path.join(shared.cmd_opts.ext_model_dir, '**/*.vae.pt'),
+            os.path.join(shared.cmd_opts.ext_model_dir, '**/*.vae.safetensors'),
+        ]
+
+    if shared.cmd_opts.ext_vae_dir is not None:
+        paths += [
+            os.path.join(shared.cmd_opts.ext_vae_dir, '**/*.ckpt'),
+            os.path.join(shared.cmd_opts.ext_vae_dir, '**/*.pt'),
+            os.path.join(shared.cmd_opts.ext_vae_dir, '**/*.safetensors')
+        ]
+
     candidates = []
     for path in paths:
         candidates += glob.iglob(path, recursive=True)

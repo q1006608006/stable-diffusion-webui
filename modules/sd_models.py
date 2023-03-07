@@ -113,6 +113,10 @@ def list_models():
         model_url = "https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.safetensors"
 
     model_list = modelloader.load_models(model_path=model_path, model_url=model_url, command_path=shared.cmd_opts.ckpt_dir, ext_filter=[".ckpt", ".safetensors"], download_name="v1-5-pruned-emaonly.safetensors", ext_blacklist=[".vae.ckpt", ".vae.safetensors"])
+    # load ext models in ext_res_dir
+    if shared.cmd_opts.ext_model_dir is not None:
+        ext_model_list = modelloader.load_models(model_path=shared.cmd_opts.ext_model_dir, ext_filter=[".ckpt", ".safetensors"], ext_blacklist=[".vae.ckpt", ".vae.safetensors"])
+        model_list.extend(ext_model_list)
 
     if os.path.exists(cmd_ckpt):
         checkpoint_info = CheckpointInfo(cmd_ckpt)
