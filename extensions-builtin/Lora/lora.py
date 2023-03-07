@@ -192,6 +192,13 @@ def list_available_loras():
         glob.glob(os.path.join(shared.cmd_opts.lora_dir, '**/*.safetensors'), recursive=True) + \
         glob.glob(os.path.join(shared.cmd_opts.lora_dir, '**/*.ckpt'), recursive=True)
 
+    if shared.cmd_opts.ext_lora_dir is not None:
+        ext_candidates = \
+            glob.glob(os.path.join(shared.cmd_opts.ext_lora_dir, '**/*.pt'), recursive=True) + \
+            glob.glob(os.path.join(shared.cmd_opts.ext_lora_dir, '**/*.safetensors'), recursive=True) + \
+            glob.glob(os.path.join(shared.cmd_opts.ext_lora_dir, '**/*.ckpt'), recursive=True)
+        candidates = candidates + ext_candidates
+
     for filename in sorted(candidates):
         if os.path.isdir(filename):
             continue

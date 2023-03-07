@@ -33,5 +33,5 @@ class ExtraNetworksPageLora(ui_extra_networks.ExtraNetworksPage):
             }
 
     def allowed_directories_for_previews(self):
-        return [shared.cmd_opts.lora_dir]
+        return [v for v in [shared.cmd_opts.lora_dir, shared.cmd_opts.ext_lora_dir] if v is not None]
 

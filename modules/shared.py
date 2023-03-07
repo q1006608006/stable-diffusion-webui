@@ -109,12 +109,32 @@ parser.add_argument("--gradio-queue", action='store_true', help="Uses gradio que
 parser.add_argument("--skip-version-check", action='store_true', help="Do not check versions of torch and xformers")
 parser.add_argument("--no-hashing", action='store_true', help="disable sha256 hashing of checkpoints to help loading performance", default=False)
 parser.add_argument("--no-download-sd-model", action='store_true', help="don't download SD1.5 model even if no model is found in --ckpt-dir", default=False)
-
+# ext resources path
+parser.add_argument("--ext-res-dir", type=str, default=None)
+# ui proxy
+parser.add_argument("--extensions-proxy", type=str, help='set extensions here, example: https://127.0.0.1:1087 (only https support not)', default=None)
 
 script_loading.preload_extensions(extensions.extensions_dir, parser)
 script_loading.preload_extensions(extensions.extensions_builtin_dir, parser)
 
 cmd_opts = parser.parse_args()
+
+
+def ext_res_path(*dirs):
+    if cmd_opts.ext_res_dir is None:
+        return None
+
+    tar_path = os.path.join(*((cmd_opts.ext_res_dir,) + dirs))
+    if os.path.isdir(tar_path):
+        return tar_path
+    else:
+        print("can not found ext_dir: \'" + tar_path + "'")
+        return None
+
+
+cmd_opts.ext_model_dir = ext_res_path('models', 'Stable-diffusion')
+cmd_opts.ext_vae_dir = ext_res_path('models', 'VAE')
+cmd_opts.ext_lora_dir = ext_res_path('models', 'Lora')
 
 restricted_opts = {
     "samples_filename_pattern",
@@ -164,6 +184,10 @@ def reload_hypernetworks():
     global hypernetworks
 
     hypernetworks = hypernetwork.list_hypernetworks(cmd_opts.hypernetwork_dir)
+    ext_hypernetwork_dir = ext_res_path('hypernetworks')
+    if ext_hypernetwork_dir is not None:
+        ext_hypernetworks = hypernetwork.list_hypernetworks(ext_hypernetwork_dir)
+        hypernetworks.update(ext_hypernetworks)
 
 
 class State:
